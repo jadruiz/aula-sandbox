@@ -1,0 +1,80 @@
+# Aula del curso Ecosistemas Inteligentes.
+#
+#   docker compose -f infrastructure/docker-compose.yml up -d
+#
+# (los scripts de scripts/ hacen esto por ti). Todos los puertos se publican
+# SOLO en 127.0.0.1: nada queda expuesto a la red del salón.
+#
+# Servicios que arrancan siempre:   lab (Jupyter), langflow, redis
+# Servicios bajo perfil:            letta (--profile memoria), flowise (--profile flowise)
+
+name: aula-sandbox
+
+services:
+
+  lab:
+    # JupyterLab + terminal con CrewAI, LangGraph, Streamlit y Langfuse. Labs M1-M6.
+    build:
+      context: ..
+      dockerfile: infrastructure/Dockerfile
+      args:
+        UID: "${UID:-1000}"
+        GID: "${GID:-1000}"
+    image: kasailabs/aula-sandbox:dev
+    ports:
+      - "127.0.0.1:8888:8888"   # JupyterLab
+      - "127.0.0.1:8501:8501"   # streamlit run (panel del Firewall, M4)
+    volumes:
+      # Solo la carpeta de trabajo. Montar $HOME o / anularía la contención.
+      - ../trabajo:/workspace
+    env_file:
+      - path: ../.env
+        required: false
+    depends_on:
+      - redis
+
+  langflow:
+    # Constructor visual de agentes: la ruta de los perfiles que no programan.
+    image: langflowai/langflow:latest
+    ports:
+      - "127.0.0.1:7860:7860"
+    environment:
+      LANGFLOW_DO_NOT_TRACK: "true"
+      LANGFLOW_CONFIG_DIR: /datos
+    env_file:
+      - path: ../.env
+        required: false
+    volumes:
+      - langflow-datos:/datos    # los flujos sobreviven a un reinicio
+
+  redis:
+    # Memoria compartida del Lab M5 (observabilidad).
+    image: redis:7-alpine
+    ports:
+      - "127.0.0.1:6379:6379"   # accesible también para quien corre labs fuera del contenedor
+
+  letta:
+    # Memoria persistente de agentes (demo de M5). Arranca solo con: --profile memoria
+    profiles: ["memoria"]
+    image: letta/letta:latest
+    ports:
+      - "127.0.0.1:8283:8283"
+    env_file:
+      - path: ../.env
+        required: false
+    volumes:
+      - letta-datos:/var/lib/postgresql/data
+
+  flowise:
+    # Alternativa drag-and-drop a LangFlow. Arranca solo con: --profile flowise
+    profiles: ["flowise"]
+    image: flowiseai/flowise:latest
+    ports:
+      - "127.0.0.1:3001:3000"
+    volumes:
+      - flowise-datos:/root/.flowise
+
+volumes:
+  langflow-datos:
+  letta-datos:
+  flowise-datos:

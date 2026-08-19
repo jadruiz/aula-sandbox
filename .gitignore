@@ -1,0 +1,25 @@
+.env
+*.log
+tmp/*
+!tmp/.gitkeep
+.DS_Store
+
+# Lo que los estudiantes generan en su carpeta de trabajo no se versiona,
+# salvo los archivos de arranque que sí trae el repo.
+trabajo/*
+!trabajo/00_prueba_conexion.py
+!trabajo/LEEME.md
+
+# Config local de herramientas de agente (nunca se versiona)
+.claude/
+.cursor/
+.aider*
+
+# Entornos virtuales
+.venv/
+venv/
+
+# Artefactos de Python (los .pyc incrustan la ruta absoluta del host)
+__pycache__/
+*.py[cod]
+*.egg-info/

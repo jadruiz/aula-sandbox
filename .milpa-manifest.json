@@ -1,0 +1,11 @@
+{
+  "id": "aula-sandbox",
+  "role": "deployable",
+  "profile": "software-single",
+  "level": 2,
+  "parent": "../",
+  "anchor": "José Ruiz",
+  "scope": "Contenedores con las herramientas del curso (JupyterLab + CrewAI/LangGraph, LangFlow, Redis, Letta) para que instalar el aula sea: OrbStack y un doble clic",
+  "inherits": [],
+  "overrides": []
+}

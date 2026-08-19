@@ -1,0 +1,24 @@
+# Excepciones al detector de rastros de IA (scripts/check_no_ai_traces.py)
+#
+# Formato:  glob | patrón (regex) | razón
+#
+# Una excepción sin razón escrita se rechaza al leer el archivo. Este archivo se versiona
+# a propósito: cada agujero en el control queda registrado, con nombre y motivo.
+
+# --- El propio control ---
+scripts/check_no_ai_traces.py | .* | el detector contiene los patrones que detecta
+governance/ai-trace-allowlist.txt | .* | este archivo enumera los patrones exceptuados
+scripts/hooks/* | .* | los hooks nombran el control que invocan
+
+# --- Aislamiento de herramientas ---
+.gitignore | \.claude/|\.cursor/|\.aider|copilot | mantener fuera la config local de agentes
+
+# --- Naturaleza de este repo -------------------------------------------------------
+# Este es un entorno de AULA: su propósito es conectar a estudiantes con proveedores de
+# modelos. Nombrarlos es funcional —el estudiante necesita saber qué clave pegar y qué
+# librería usa el lab—, no es atribución de autoría.
+#
+# Esta excepción apaga SOLO las reglas `vendor` y `model-id`. La regla `attribution`
+# (Co-Authored-By, footers de generación) y la de identidad del commit siguen activas:
+# un commit firmado por una IA se rechaza igual que en los demás repos.
+* | (anthropic|openai|chatgpt|copilot|deepseek|perplexity|claude|gemini|gpt[-._ ]?[0-9]|codex|llama|mistral|grok) | entorno de curso: nombrar proveedores y modelos es funcional

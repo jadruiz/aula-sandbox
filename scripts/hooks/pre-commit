@@ -1,0 +1,5 @@
+#!/bin/sh
+# Bloquea rastros de autoría por IA en el contenido y las rutas que entran al commit.
+# Instalar:  scripts/install-hooks.sh
+# Saltar una vez:  git commit --no-verify
+exec python3 "$(git rev-parse --show-toplevel)/scripts/check_no_ai_traces.py"

@@ -1,0 +1,3 @@
+#!/bin/sh
+# Bloquea Co-Authored-By de IA, footers de generación e identidad de proveedor.
+exec python3 "$(git rev-parse --show-toplevel)/scripts/check_no_ai_traces.py" --message "$1"
