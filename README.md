@@ -85,6 +85,12 @@ agente) vive en el repo del curso: `documentacion/guia_practica_paso_a_paso.md`.
 | [`milpa-sdk`](https://codeberg.org/kasailabs/milpa-sdk) · Codeberg | Implementación de la Metodología Milpa (roles Maíz/Frijol/Calabaza de M2) | Lo lee cuando M2 lo cite; no necesita instalarlo |
 | [`asilo-core`](https://codeberg.org/kasailabs/asilo-core) · Codeberg | Implementación del marco ASILO (gobernanza de M4 y M7) | Lo lee en M7; no necesita instalarlo |
 | [`asilo-sandbox`](https://github.com/jadruiz/asilo-sandbox) · GitHub | Prototipo de aislamiento para agentes autónomos | **Solo lectura**: su README explica por qué aún no se usa |
+| **`kasai-crew`** (local; publicación pendiente) | Un plano de control para todos los repos Kasai | Solo bundles revisados; no montar el ecosistema completo |
+
+La frontera prevista para `kasai-crew` está documentada en
+[`docs/architecture/kasai-crew-runtime.md`](docs/architecture/kasai-crew-runtime.md). No está
+habilitada aún: la topología ya pasó un smoke offline desde source read-only, pero falta una wheel
+revisada con hash y su fixture E2E en la imagen congelada.
 
 ## Para docentes
 

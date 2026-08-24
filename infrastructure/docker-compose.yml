@@ -27,6 +27,9 @@ services:
     volumes:
       # Solo la carpeta de trabajo. Montar $HOME o / anularía la contención.
       - ../trabajo:/workspace
+    tmpfs:
+      # Estado/cache efímero de CrewAI y herramientas; nunca toca $HOME o trabajo/.
+      - /tmp:rw,nosuid,nodev,size=256m,mode=1777
     env_file:
       - path: ../.env
         required: false

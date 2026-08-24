@@ -14,7 +14,7 @@ empaqueta y arranca. El material vive en el repo del curso; la metodología, en 
 | ID | Axioma |
 |----|--------|
 | AX-01 | Ningún secreto queda dentro de la imagen (`ENV`, `ARG` o capa copiada) |
-| AX-02 | El único montaje de escritura es `trabajo/` |
+| AX-02 | El único bind mount del host es `trabajo/`; estado efímero sólo en tmpfs `/tmp` |
 | AX-03 | El proceso dentro del contenedor nunca corre como root |
 | AX-04 | Ningún puerto se publica fuera de `127.0.0.1` |
 | AX-05 | Telemetría de terceros apagada donde la herramienta lo permita |

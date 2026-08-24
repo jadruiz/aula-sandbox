@@ -21,6 +21,8 @@
   eso abre un ADR aquí y pruebas de compatibilidad allá.
 - `asilo-sandbox` queda como pieza hermana con otro modelo de amenazas; ver su ADR-002
   (perfil `course-restricted`) para la eventual convergencia.
+- `kasai-crew` es un plano de control hermano. Aula no lo contiene ni monta sus repos: cuando
+  exista una wheel revisada podrá ejecutar bundles portátiles dentro de `trabajo/`. Ver ADR-002.
 
 ## Regla de sincronizacion
 

@@ -28,18 +28,30 @@ RUN groupadd -g "${GID}" aula \
 # de versiones queda auditable dentro de la imagen:
 RUN pip install --no-cache-dir \
       jupyterlab \
-      crewai crewai-tools \
+      "crewai[litellm]" crewai-tools \
       langgraph langchain langchain-core langchain-openai \
       openai anthropic \
       langfuse redis \
       streamlit pandas \
       fastapi "uvicorn[standard]" \
       python-dotenv \
+ && python -c "from crewai import Agent, Crew, LLM, Task; print('CrewAI API base: OK')" \
  && mkdir -p /opt/aula \
  && pip freeze > /opt/aula/versiones-instaladas.txt
 
+# CrewAI 1.15.x crea una clave local de su listener de tracing durante el
+# import y usa ~/.local/share sin respetar XDG_DATA_HOME. La ruta queda como
+# symlink inmutable a /tmp: la clave es efímera y nunca persiste en HOME.
+RUN mkdir -p /home/aula/.local \
+ && ln -s /tmp /home/aula/.local/share \
+ && chown -R aula:aula /home/aula/.local
+
 USER aula
 WORKDIR /workspace
+
+# El resto del estado/cache compatible con XDG también queda en /tmp.
+ENV XDG_DATA_HOME=/tmp/aula/xdg-data \
+    XDG_CACHE_HOME=/tmp/aula/xdg-cache
 
 # /workspace espeja la carpeta trabajo/ del host. Es el ÚNICO montaje.
 VOLUME ["/workspace"]
