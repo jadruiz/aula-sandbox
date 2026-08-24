@@ -48,6 +48,10 @@ inmutable a `/tmp`. `trabajo/` sigue siendo el único bind mount del host.
 - La imagen tiene smoke de compatibilidad desde source read-only, pero no desde una wheel firmada.
 - Una corrida externa exige API/gateway independiente; una suscripción de chat no se trata como
   credencial programática.
+- Se construyó y arrancó la imagen `lab` en contenedores efímeros; no se ejecutó
+  `docker compose up` de la pila completa ni se probaron LangFlow/Redis/Letta/Flowise.
+- “Único montaje” significa único **bind mount del host para `lab`**. Los servicios auxiliares
+  declaran volúmenes nombrados y no pertenecen automáticamente al perfil restringido.
 
 ## Gates para habilitar el perfil
 

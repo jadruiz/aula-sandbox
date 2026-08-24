@@ -15,7 +15,8 @@ agentes sin programar, Redis para el lab de observabilidad y Letta para la demo 
 **No es `asilo-sandbox`.** Aquel repo aísla a un agente autónomo con acceso a archivos y
 sigue bloqueado hasta pasar revisión de seguridad. Aquí el modelo de amenazas es el de un
 aula: el código lo escribe y ejecuta el estudiante, la única credencial es una clave
-desechable con tope de gasto, y el único montaje es la carpeta `trabajo/`. Ver
+desechable con un tope configurado en el proveedor, y el único bind mount del host para
+el servicio `lab` es la carpeta `trabajo/`. Ver
 `governance/decisions/ADR-001-alcance-y-frontera.md`.
 
 ## Arranque
@@ -34,7 +35,7 @@ desechable con tope de gasto, y el único montaje es la carpeta `trabajo/`. Ver
 |-----|-------------|----------|
 | <http://localhost:8888> | JupyterLab | Labs M1–M6 (código y terminal) |
 | <http://localhost:7860> | LangFlow | Construir agentes arrastrando cajas (Ruta B) |
-| <http://localhost:8501> | Streamlit | Panel del Firewall Ético (M4, al correr `streamlit run`) |
+| <http://localhost:8501> | Streamlit | Panel de compuerta de política (M4, al correr `streamlit run`) |
 | <http://localhost:8283> | Letta | Memoria persistente (M5) · `--profile memoria` |
 | <http://localhost:3001> | Flowise | Alternativa a LangFlow · `--profile flowise` |
 
@@ -49,22 +50,26 @@ aula-sandbox/trabajo/        ←→   /workspace/   (dentro del contenedor lab)
 ```
 
 Es la misma carpeta vista desde dos lados: copia ahí los archivos del lab del día y
-aparecen en Jupyter; lo que guardes en Jupyter aparece en Finder. Es el **único** montaje.
+aparecen en Jupyter; lo que guardes en Jupyter aparece en Finder. Es el **único bind mount
+del host de `lab`**; `/tmp` es tmpfs efímero y servicios auxiliares usan volúmenes
+nombrados separados.
 
 ## Contención honesta
 
-Docker aporta contención **parcial**, no aislamiento absoluto: comparte el kernel y la red.
-Lo que este diseño sí garantiza y por qué alcanza para un aula:
+Docker aporta contención **parcial**, no aislamiento absoluto: comparte el kernel/runtime y la red.
+Lo que la configuración pretende y el baseline verificó sólo en parte:
 
 - Ningún puerto sale de `127.0.0.1`: nadie más en la red del salón puede entrar.
 - Ninguna clave queda dentro de la imagen; viven en tu `.env`, que no se versiona.
-- El contenedor no corre como root y solo ve `trabajo/`.
-- La clave del curso debe ser **desechable y con tope de gasto** (5 USD bastan). Si se
-  filtra, se revoca y se pierde el tope, no tu cuenta.
+- El proceso `lab` no corre como root y no recibe otros bind mounts del host; también ve su
+  filesystem de imagen, tmpfs y recursos que Docker expone.
+- La clave del curso debe ser **desechable, de mínimo alcance y con un hard cap pequeño definido
+  por el docente/owner**. El compose no crea ni verifica ese tope.
 - LangFlow arranca con la telemetría apagada (`LANGFLOW_DO_NOT_TRACK=true`).
 
-Lo que NO cubre: código malicioso que tú mismo pegues y ejecutes con tu clave. El firewall
-para eso es M4 del curso, no este contenedor.
+Lo que NO cubre: código malicioso que tú mismo pegues y ejecutes con tu clave, procesos locales que
+accedan a un puerto loopback sin token ni una dependencia que lea variables de entorno. M4 enseña
+compuertas y red teaming; no debe presentarse como protección completa del contenedor.
 
 ## Reproducibilidad
 
@@ -82,8 +87,8 @@ agente) vive en el repo del curso: `documentacion/guia_practica_paso_a_paso.md`.
 | Repo | Qué es | El estudiante… |
 |------|--------|----------------|
 | **`aula-sandbox`** (este) · [GitHub](https://github.com/jadruiz/aula-sandbox) | Las herramientas del curso en contenedores | Lo descarga y lo usa toda sesión |
-| [`milpa-sdk`](https://codeberg.org/kasailabs/milpa-sdk) · Codeberg | Implementación de la Metodología Milpa (roles Maíz/Frijol/Calabaza de M2) | Lo lee cuando M2 lo cite; no necesita instalarlo |
-| [`asilo-core`](https://codeberg.org/kasailabs/asilo-core) · Codeberg | Implementación del marco ASILO (gobernanza de M4 y M7) | Lo lee en M7; no necesita instalarlo |
+| [`milpa-sdk`](https://codeberg.org/kasailabs/milpa-sdk) · Codeberg | Proyección Python candidata de manifests/perfiles MILPA; sus funciones centrales son stubs | Lo lee como contrato, no control de acceso |
+| [`asilo-core`](https://codeberg.org/kasailabs/asilo-core) · Codeberg | Implementación candidata de controles ASILO; guardrails/schema/HITL siguen como stubs | Lo lee como diseño, no enforcement |
 | [`asilo-sandbox`](https://github.com/jadruiz/asilo-sandbox) · GitHub | Prototipo de aislamiento para agentes autónomos | **Solo lectura**: su README explica por qué aún no se usa |
 | **`kasai-crew`** (local; publicación pendiente) | Un plano de control para todos los repos Kasai | Solo bundles revisados; no montar el ecosistema completo |
 

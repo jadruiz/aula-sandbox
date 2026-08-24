@@ -22,7 +22,8 @@ source de un repo hermano al contexto Docker.
 
 ## Consecuencias
 
-- Se conserva AX-02: un único montaje de escritura.
+- Se conserva AX-02 como frontera host: un único bind mount de datos (`trabajo/`); el tmpfs de
+  runtime es efímero y no expone otra ruta del host.
 - El control plane y el runtime pueden versionarse y probarse por separado.
 - El bundle contiene evidencia y requiere la misma clasificación/retención que su contenido.
 - La implementación E2E queda bloqueada hasta una release instalable y un proveedor simulado.

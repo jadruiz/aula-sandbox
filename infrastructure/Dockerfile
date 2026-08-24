@@ -53,7 +53,8 @@ WORKDIR /workspace
 ENV XDG_DATA_HOME=/tmp/aula/xdg-data \
     XDG_CACHE_HOME=/tmp/aula/xdg-cache
 
-# /workspace espeja la carpeta trabajo/ del host. Es el ÚNICO montaje.
+# /workspace espeja trabajo/ y es el único bind mount del host para lab.
+# /tmp se aporta como tmpfs efímero en Compose.
 VOLUME ["/workspace"]
 
 EXPOSE 8888 8501

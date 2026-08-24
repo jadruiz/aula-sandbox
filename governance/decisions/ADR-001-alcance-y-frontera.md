@@ -23,10 +23,12 @@ no aislar agentes**.
 1. Lo que corre dentro es JupyterLab, LangFlow, Redis y Letta; el código lo escribe y
    dispara el estudiante. No hay Agente Cero ni launcher auto-modificable: los scripts de
    arranque viven en `scripts/`, fuera del montaje `trabajo/`.
-2. Único montaje: `trabajo/`. Puertos solo en `127.0.0.1`. Proceso no-root. Sin secretos
-   en la imagen.
-3. Jupyter corre **sin token**: la superficie de acceso es el loopback de la máquina del
-   estudiante; un token compartido en pizarra daría seguridad teatral, no real.
+2. Único bind mount del host para `lab`: `trabajo/`; el estado compatible vive en tmpfs y los
+   servicios auxiliares mantienen volúmenes nombrados propios. Puertos solo en `127.0.0.1`.
+   Proceso no-root. Sin secretos en la imagen.
+3. Jupyter corre **sin token**: la superficie de red se reduce al loopback de la máquina del
+   estudiante. Esto no bloquea a otros procesos locales y debe revisarse para perfiles más fuertes;
+   un token compartido en pizarra tampoco resolvería esa frontera.
 4. Credenciales: clave **desechable con tope de gasto** en `.env` no versionado. Se acepta
    `env_file` (compose lo parsea como datos, no lo ejecuta como shell — a diferencia del
    `source .env` que bloqueó a asilo-sandbox).
