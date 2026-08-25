@@ -6,6 +6,17 @@
 
 **Perfil Milpa:** `software-single` (P2) · **Distribución prevista:** carpeta + imagen Docker · **Estado:** usable en aula
 
+## TL;DR
+
+- Doble clic en `scripts/arrancar.command`: monta `trabajo/` y levanta el aula.
+- Doble clic en `scripts/montar_carpeta.command`: elige otra carpeta sin copiarla.
+- Siempre hay un solo bind mount para `lab`; raíz, home, symlinks y carpetas con `.env` se rechazan.
+- Aula es contención educativa parcial, no `asilo-sandbox` ni una frontera para código hostil.
+- Para Kasai Crew se copian bundles; nunca se monta todo el ecosistema.
+
+Empieza por la [guía rápida](docs/QUICKSTART.md), mira los
+[diagramas](docs/architecture/DIAGRAMS.md) y usa el [índice piramidal](docs/INDEX.md).
+
 ## Qué es (y qué no es)
 
 Este repo empaqueta las **herramientas** de los labs para que nadie pierda una sesión
@@ -29,6 +40,8 @@ el servicio `lab` es la carpeta `trabajo/`. Ver
 3. **Doble clic en `scripts/arrancar.command`.** La primera vez te crea el `.env` y lo abre
    para que pegues tu clave; el segundo doble clic construye la imagen (10–15 min la
    primera vez) y levanta todo.
+   Si quieres trabajar sobre otra carpeta sin copiarla, usa
+   `scripts/montar_carpeta.command`; el selector valida la frontera antes de arrancar.
 4. Abre las herramientas en el navegador:
 
 | URL | Herramienta | Para qué |
@@ -42,7 +55,7 @@ el servicio `lab` es la carpeta `trabajo/`. Ver
 Para apagar: doble clic en `scripts/detener.command`. Los flujos de LangFlow y la memoria
 de Letta sobreviven en volúmenes; la carpeta `trabajo/` es tuya y vive en el host.
 
-## La carpeta `trabajo/`
+## La carpeta montada
 
 ```
 aula-sandbox/trabajo/        ←→   /workspace/   (dentro del contenedor lab)
@@ -50,9 +63,18 @@ aula-sandbox/trabajo/        ←→   /workspace/   (dentro del contenedor lab)
 ```
 
 Es la misma carpeta vista desde dos lados: copia ahí los archivos del lab del día y
-aparecen en Jupyter; lo que guardes en Jupyter aparece en Finder. Es el **único bind mount
-del host de `lab`**; `/tmp` es tmpfs efímero y servicios auxiliares usan volúmenes
-nombrados separados.
+aparecen en Jupyter; lo que guardes en Jupyter aparece en Finder. También puedes elegir
+otra carpeta explícita. En ambos casos es el **único bind mount del host de `lab`**;
+`/tmp` es tmpfs efímero y servicios auxiliares usan volúmenes nombrados separados.
+
+En terminal:
+
+```bash
+scripts/arrancar.sh /ruta/a/mi-proyecto
+```
+
+El validador rechaza montajes demasiado amplios y carpetas con `.env`. Esto reduce exposición;
+no convierte Docker en aislamiento absoluto.
 
 ## Contención honesta
 
@@ -87,8 +109,8 @@ agente) vive en el repo del curso: `documentacion/guia_practica_paso_a_paso.md`.
 | Repo | Qué es | El estudiante… |
 |------|--------|----------------|
 | **`aula-sandbox`** (este) · [GitHub](https://github.com/jadruiz/aula-sandbox) | Las herramientas del curso en contenedores | Lo descarga y lo usa toda sesión |
-| [`milpa-sdk`](https://codeberg.org/kasailabs/milpa-sdk) · Codeberg | Proyección Python candidata de manifests/perfiles MILPA; sus funciones centrales son stubs | Lo lee como contrato, no control de acceso |
-| [`asilo-core`](https://codeberg.org/kasailabs/asilo-core) · Codeberg | Implementación candidata de controles ASILO; guardrails/schema/HITL siguen como stubs | Lo lee como diseño, no enforcement |
+| [`milpa-sdk`](https://codeberg.org/kasailabs/milpa-sdk) · Codeberg | Proyección Python candidata; loader y validación de perfil ya son ejecutables, roles/dominios siguen diferidos | Lo usa para estructura, no como control de acceso |
+| [`asilo-core`](https://codeberg.org/kasailabs/asilo-core) · Codeberg | Implementación candidata; schema/status ejecutan, política/HITL/audit siguen stubs | Usa sólo capacidades verificadas, nunca el nombre como enforcement |
 | [`asilo-sandbox`](https://github.com/jadruiz/asilo-sandbox) · GitHub | Prototipo de aislamiento para agentes autónomos | **Solo lectura**: su README explica por qué aún no se usa |
 | **`kasai-crew`** (local; publicación pendiente) | Un plano de control para todos los repos Kasai | Solo bundles revisados; no montar el ecosistema completo |
 
@@ -106,6 +128,8 @@ revisada con hash y su fixture E2E en la imagen congelada.
   (regla 3 de `AGENTS.md`).
 - Letta y Flowise arrancan bajo perfil: `docker compose -f infrastructure/docker-compose.yml --profile memoria up -d` (ídem `--profile flowise`).
 - Al cierre del curso recuerda al grupo revocar sus claves.
+- Para una carpeta distinta usa el selector o `scripts/arrancar.sh /ruta`; no edites Compose
+  ni montes home/raíz para “hacerlo rápido”.
 
 ## Licencia
 

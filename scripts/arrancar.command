@@ -3,7 +3,13 @@
 set -uo pipefail
 cd "$(dirname "$0")/.."
 
-COMPOSE="docker compose -f infrastructure/docker-compose.yml"
+COMPOSE=(docker compose -f infrastructure/docker-compose.yml)
+
+if ! AULA_WORKSPACE="$(scripts/validar_carpeta.sh "${1:-trabajo}")"; then
+    read -r -p "Pulsa Enter para cerrar..."
+    exit 1
+fi
+export AULA_WORKSPACE
 
 echo "════════════════════════════════════════════════════"
 echo "  Aula · Ecosistemas Inteligentes"
@@ -46,7 +52,7 @@ fi
 # 3. Levantar. La primera vez construye la imagen: 10-15 minutos es normal.
 echo ""
 echo "  Levantando contenedores (la primera vez tarda 10-15 min)..."
-if ! $COMPOSE up -d --build; then
+if ! "${COMPOSE[@]}" up -d --build; then
     echo ""
     echo "  Algo falló al levantar. Haz una captura de lo de arriba y"
     echo "  mándasela al instructor."
@@ -60,7 +66,7 @@ echo ""
 echo "    JupyterLab (labs de código) →  http://localhost:8888"
 echo "    LangFlow  (agentes visuales) →  http://localhost:7860"
 echo ""
-echo "  Tu carpeta de trabajo es:  $(pwd)/trabajo"
+echo "  Tu carpeta de trabajo es:  ${AULA_WORKSPACE}"
 echo "  Para apagar todo: doble clic en scripts/detener.command"
 open "http://localhost:8888" 2>/dev/null || true
 sleep 3

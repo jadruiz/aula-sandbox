@@ -25,8 +25,11 @@ services:
       - "127.0.0.1:8888:8888"   # JupyterLab
       - "127.0.0.1:8501:8501"   # streamlit run (panel del Firewall, M4)
     volumes:
-      # Solo la carpeta de trabajo. Montar $HOME o / anularía la contención.
-      - ../trabajo:/workspace
+      # Un solo workspace explícito. Los scripts validan y exportan AULA_WORKSPACE;
+      # el valor por defecto conserva la experiencia original con trabajo/.
+      - type: bind
+        source: "${AULA_WORKSPACE:-../trabajo}"
+        target: /workspace
     tmpfs:
       # Estado/cache efímero de CrewAI y herramientas; nunca toca $HOME o trabajo/.
       - /tmp:rw,nosuid,nodev,size=256m,mode=1777

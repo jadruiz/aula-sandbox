@@ -2,6 +2,12 @@
 # Variante para Linux / terminal (misma lógica que arrancar.command, sin `open`).
 set -uo pipefail
 cd "$(dirname "$0")/.."
+
+if ! AULA_WORKSPACE="$(scripts/validar_carpeta.sh "${1:-trabajo}")"; then
+    exit 1
+fi
+export AULA_WORKSPACE
+
 if ! docker info >/dev/null 2>&1; then
     echo "Docker no responde. Instala OrbStack (macOS) o Docker Engine y reintenta." >&2
     exit 1
@@ -17,3 +23,4 @@ if grep -q "PEGA-AQUI-TU-CLAVE" .env; then
 fi
 docker compose -f infrastructure/docker-compose.yml up -d --build
 echo "JupyterLab: http://localhost:8888 · LangFlow: http://localhost:7860"
+echo "Carpeta montada: ${AULA_WORKSPACE}"

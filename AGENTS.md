@@ -14,7 +14,7 @@ empaqueta y arranca. El material vive en el repo del curso; la metodología, en 
 | ID | Axioma |
 |----|--------|
 | AX-01 | Ningún secreto queda dentro de la imagen (`ENV`, `ARG` o capa copiada) |
-| AX-02 | El único bind mount del host es `trabajo/`; estado efímero sólo en tmpfs `/tmp` |
+| AX-02 | Existe un solo bind mount: workspace explícito validado; por defecto `trabajo/` |
 | AX-03 | El proceso dentro del contenedor nunca corre como root |
 | AX-04 | Ningún puerto se publica fuera de `127.0.0.1` |
 | AX-05 | Telemetría de terceros apagada donde la herramienta lo permita |
@@ -36,4 +36,5 @@ empaqueta y arranca. El material vive en el repo del curso; la metodología, en 
 - [ ] La imagen construye desde cero y `versiones-instaladas.txt` queda dentro.
 - [ ] Doble clic en `arrancar.command` llega a Jupyter y LangFlow en un equipo limpio.
 - [ ] Lo creado en Jupyter aparece en `trabajo/` con permisos utilizables.
+- [ ] Una carpeta alternativa pasa el validador y aparece en `/workspace` sin montar home/raíz.
 - [ ] Todo doc nuevo enlazado desde `docs/INDEX.md`.
