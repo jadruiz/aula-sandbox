@@ -2,13 +2,13 @@
 
 > Las herramientas del curso **Ecosistemas Inteligentes** en contenedores. Instalar el aula
 > son dos pasos: instalar [OrbStack](https://orbstack.dev) y hacer doble clic en
-> `scripts/arrancar.command`.
+> `scripts/arrancar.command`. El primer arranque es offline: no pide API key.
 
 **Perfil Milpa:** `software-single` (P2) · **Distribución prevista:** carpeta + imagen Docker · **Estado:** usable en aula
 
 ## TL;DR
 
-- Doble clic en `scripts/arrancar.command`: monta `trabajo/` y levanta el aula.
+- Doble clic en `scripts/arrancar.command`: monta `trabajo/` y levanta el aula sin credenciales.
 - Doble clic en `scripts/montar_carpeta.command`: elige otra carpeta sin copiarla.
 - Siempre hay un solo bind mount para `lab`; raíz, home, symlinks y carpetas con `.env` se rechazan.
 - Aula es contención educativa parcial, no `asilo-sandbox` ni una frontera para código hostil.
@@ -25,8 +25,9 @@ agentes sin programar, Redis para el lab de observabilidad y Letta para la demo 
 
 **No es `asilo-sandbox`.** Aquel repo aísla a un agente autónomo con acceso a archivos y
 sigue bloqueado hasta pasar revisión de seguridad. Aquí el modelo de amenazas es el de un
-aula: el código lo escribe y ejecuta el estudiante, la única credencial es una clave
-desechable con un tope configurado en el proveedor, y el único bind mount del host para
+aula: el código lo escribe y ejecuta el estudiante. Si un laboratorio usa un proveedor,
+la credencial debe ser desechable y tener un tope configurado en el proveedor; el único bind
+mount del host para
 el servicio `lab` es la carpeta `trabajo/`. Ver
 `governance/decisions/ADR-001-alcance-y-frontera.md`.
 
@@ -37,9 +38,10 @@ el servicio `lab` es la carpeta `trabajo/`. Ver
 2. **Descarga esta carpeta** — en <https://github.com/jadruiz/aula-sandbox>, botón verde
    **Code → Download ZIP**, y descomprime donde quieras (por ejemplo `Documentos`). Si usas
    git: `git clone https://github.com/jadruiz/aula-sandbox.git`.
-3. **Doble clic en `scripts/arrancar.command`.** La primera vez te crea el `.env` y lo abre
-   para que pegues tu clave; el segundo doble clic construye la imagen (10–15 min la
-   primera vez) y levanta todo.
+3. **Doble clic en `scripts/arrancar.command`.** La primera vez crea un `.env` vacío y
+   construye la imagen (10–15 min la primera vez); no necesitas una clave para abrir el aula.
+   Si un laboratorio posterior requiere un proveedor, configura una clave desechable con hard cap
+   en `.env` y vuelve a ejecutar. Nunca la guardes en `trabajo/`.
    Si quieres trabajar sobre otra carpeta sin copiarla, usa
    `scripts/montar_carpeta.command`; el selector valida la frontera antes de arrancar.
 4. Abre las herramientas en el navegador:
@@ -82,11 +84,11 @@ Docker aporta contención **parcial**, no aislamiento absoluto: comparte el kern
 Lo que la configuración pretende y el baseline verificó sólo en parte:
 
 - Ningún puerto sale de `127.0.0.1`: nadie más en la red del salón puede entrar.
-- Ninguna clave queda dentro de la imagen; viven en tu `.env`, que no se versiona.
+- Ninguna clave queda dentro de la imagen; si existe una, vive en tu `.env`, que no se versiona.
 - El proceso `lab` no corre como root y no recibe otros bind mounts del host; también ve su
   filesystem de imagen, tmpfs y recursos que Docker expone.
-- La clave del curso debe ser **desechable, de mínimo alcance y con un hard cap pequeño definido
-  por el docente/owner**. El compose no crea ni verifica ese tope.
+- Si un laboratorio usa una clave, debe ser **desechable, de mínimo alcance y con un hard cap pequeño
+  definido por el docente/owner**. El compose no crea ni verifica ese tope.
 - LangFlow arranca con la telemetría apagada (`LANGFLOW_DO_NOT_TRACK=true`).
 
 Lo que NO cubre: código malicioso que tú mismo pegues y ejecutes con tu clave, procesos locales que

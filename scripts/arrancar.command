@@ -31,22 +31,17 @@ fi
 # 2. ¿Existe el .env con la clave?
 if [[ ! -f .env ]]; then
     cp .env.ejemplo .env
+    chmod 600 .env
     echo ""
-    echo "  Te acabo de crear el archivo .env y te lo abro."
-    echo "  Sustituye sk-proj-PEGA-AQUI-TU-CLAVE por tu clave del curso"
-    echo "  (una clave DESECHABLE con tope de gasto), guarda, y vuelve"
-    echo "  a hacer doble clic en este archivo."
-    open -t .env 2>/dev/null || true
-    read -r -p "Pulsa Enter para cerrar..."
-    exit 0
-fi
-if grep -q "PEGA-AQUI-TU-CLAVE" .env; then
+    echo "  Te acabo de crear .env sin credenciales. Aula continuará en modo offline."
+elif grep -q "PEGA-AQUI-TU-CLAVE" .env; then
+    # Compatibilidad con clones anteriores; el marcador no es una credencial real.
+    temporal="$(mktemp "${TMPDIR:-/tmp}/aula-env.XXXXXX")"
+    sed 's/sk-proj-PEGA-AQUI-TU-CLAVE//' .env > "$temporal"
+    chmod 600 "$temporal"
+    mv "$temporal" .env
     echo ""
-    echo "  Tu .env todavía tiene el texto de ejemplo en OPENAI_API_KEY."
-    echo "  Pega tu clave real, guarda, y vuelve a ejecutar. Te lo abro."
-    open -t .env 2>/dev/null || true
-    read -r -p "Pulsa Enter para cerrar..."
-    exit 0
+    echo "  Se quitó el marcador de ejemplo. Aula continuará en modo offline."
 fi
 
 # 3. Levantar. La primera vez construye la imagen: 10-15 minutos es normal.
