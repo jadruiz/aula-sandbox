@@ -38,7 +38,8 @@ el servicio `lab` es la carpeta `trabajo/`. Ver
 2. **Descarga esta carpeta** — en <https://github.com/jadruiz/aula-sandbox>, botón verde
    **Code → Download ZIP**, y descomprime donde quieras (por ejemplo `Documentos`). Si usas
    git: `git clone https://github.com/jadruiz/aula-sandbox.git`.
-3. **Doble clic en `scripts/arrancar.command`.** La primera vez crea un `.env` vacío y
+3. **Doble clic en `scripts/arrancar.command`** (macOS y Linux con escritorio) **o en
+   `scripts/arrancar.bat`** (Windows con Docker Desktop y backend WSL 2). La primera vez crea un `.env` vacío y
    construye la imagen (10–15 min la primera vez); no necesitas una clave para abrir el aula.
    Si un laboratorio posterior requiere un proveedor, configura una clave desechable con hard cap
    en `.env` y vuelve a ejecutar. Nunca la guardes en `trabajo/`.
@@ -54,7 +55,7 @@ el servicio `lab` es la carpeta `trabajo/`. Ver
 | <http://localhost:8283> | Letta | Memoria persistente (M5) · `--profile memoria` |
 | <http://localhost:3001> | Flowise | Alternativa a LangFlow · `--profile flowise` |
 
-Para apagar: doble clic en `scripts/detener.command`. Los flujos de LangFlow y la memoria
+Para apagar: doble clic en `scripts/detener.command` o, en Windows, `scripts/detener.bat`. Los flujos de LangFlow y la memoria
 de Letta sobreviven en volúmenes; la carpeta `trabajo/` es tuya y vive en el host.
 
 ## La carpeta montada
@@ -90,6 +91,9 @@ Lo que la configuración pretende y el baseline verificó sólo en parte:
 - Si un laboratorio usa una clave, debe ser **desechable, de mínimo alcance y con un hard cap pequeño
   definido por el docente/owner**. El compose no crea ni verifica ese tope.
 - LangFlow arranca con la telemetría apagada (`LANGFLOW_DO_NOT_TRACK=true`).
+- LangFlow entra sin pantalla de login (`LANGFLOW_AUTO_LOGIN=true`) porque su puerto sólo existe en
+  `127.0.0.1`; sus datos viven en un volumen cuya propiedad se corrige en cada arranque para el
+  usuario no-root de la imagen.
 
 Lo que NO cubre: código malicioso que tú mismo pegues y ejecutes con tu clave, procesos locales que
 accedan a un puerto loopback sin token ni una dependencia que lea variables de entorno. M4 enseña

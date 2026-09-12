@@ -39,19 +39,39 @@ services:
     depends_on:
       - redis
 
+  langflow-init:
+    # La imagen de LangFlow corre como UID 1000 (grupo 0) y escribe su base y su llave
+    # secreta en LANGFLOW_CONFIG_DIR. Un volumen nombrado nace como root; si el proceso no
+    # puede escribir ahí, LangFlow cae en el arranque. Este paso corrige la propiedad del
+    # volumen y termina; no expone puertos ni queda corriendo.
+    image: alpine:3.20
+    user: "0:0"
+    command: ["sh", "-c", "chown -R 1000:0 /app/langflow && chmod -R u+rwX,g+rwX /app/langflow"]
+    volumes:
+      - langflow-datos:/app/langflow
+
   langflow:
     # Constructor visual de agentes: la ruta de los perfiles que no programan.
     image: langflowai/langflow:latest
+    depends_on:
+      langflow-init:
+        condition: service_completed_successfully
     ports:
       - "127.0.0.1:7860:7860"
     environment:
       LANGFLOW_DO_NOT_TRACK: "true"
-      LANGFLOW_CONFIG_DIR: /datos
+      # /app/langflow existe en la imagen con propiedad 1000:0; es la ruta que la propia
+      # documentación de LangFlow usa para persistir datos.
+      LANGFLOW_CONFIG_DIR: /app/langflow
+      # Sin pantalla de login: igual que Jupyter sin token, el puerto sólo se publica en
+      # 127.0.0.1 del host (ADR-001). Con login, el primer arranque exige crear un
+      # superusuario que nadie en el aula tiene forma de conocer.
+      LANGFLOW_AUTO_LOGIN: "true"
     env_file:
       - path: ../.env
         required: false
     volumes:
-      - langflow-datos:/datos    # los flujos sobreviven a un reinicio
+      - langflow-datos:/app/langflow    # los flujos sobreviven a un reinicio
 
   redis:
     # Memoria compartida del Lab M5 (observabilidad).

@@ -27,6 +27,29 @@ def test_compose_usa_un_workspace_configurable() -> None:
     assert content.count("target: /workspace") == 1
 
 
+def test_compose_langflow_escribe_en_ruta_propia_y_sin_login() -> None:
+    content = COMPOSE.read_text(encoding="utf-8")
+    # La imagen corre como UID 1000; /app/langflow es su directorio de datos.
+    assert "LANGFLOW_CONFIG_DIR: /app/langflow" in content
+    assert "langflow-datos:/app/langflow" in content
+    assert "chown -R 1000:0 /app/langflow" in content
+    assert "condition: service_completed_successfully" in content
+    assert 'LANGFLOW_AUTO_LOGIN: "true"' in content
+    # El puerto sigue en loopback: sin login sólo es aceptable si nadie más puede entrar.
+    assert '"127.0.0.1:7860:7860"' in content
+
+
+def test_scripts_windows_existen_y_no_montan_home() -> None:
+    scripts = ROOT / "scripts"
+    for name in ("arrancar.bat", "arrancar.ps1", "detener.bat", "detener.ps1",
+                 "montar_carpeta.bat", "montar_carpeta.ps1", "validar_carpeta.ps1"):
+        assert (scripts / name).is_file(), name
+    validador = (scripts / "validar_carpeta.ps1").read_text(encoding="utf-8")
+    assert "USERPROFILE" in validador
+    assert "ReparsePoint" in validador
+    assert ".env" in validador
+
+
 def test_validador_acepta_subcarpeta_limpia(tmp_path: Path) -> None:
     home = tmp_path / "home"
     workspace = home / "proyectos" / "demo"
