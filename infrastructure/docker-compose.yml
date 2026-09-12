@@ -46,12 +46,20 @@ services:
       - "127.0.0.1:7860:7860"
     environment:
       LANGFLOW_DO_NOT_TRACK: "true"
-      LANGFLOW_CONFIG_DIR: /datos
+      # /app/data es el HOME de LangFlow y ya viene en la imagen como 1000:0 775,
+      # así que el volumen nombrado nace con dueño correcto. Un directorio inventado
+      # (p. ej. /datos) nacería root:root 755 y el arranque moriría con
+      # PermissionError al escribir secret_key, porque LangFlow corre con uid 1000.
+      LANGFLOW_CONFIG_DIR: /app/data
+      # La imagen trae LANGFLOW_AUTO_LOGIN=false y desde 1.12 eso exige usuario y
+      # contraseña de superusuario, así que sin esto el contenedor no arranca.
+      # El aula abre LangFlow sin login: sólo escucha en 127.0.0.1.
+      LANGFLOW_AUTO_LOGIN: "true"
     env_file:
       - path: ../.env
         required: false
     volumes:
-      - langflow-datos:/datos    # los flujos sobreviven a un reinicio
+      - langflow-datos:/app/data    # los flujos sobreviven a un reinicio
 
   redis:
     # Memoria compartida del Lab M5 (observabilidad).
