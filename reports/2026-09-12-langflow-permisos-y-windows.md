@@ -64,6 +64,8 @@ digest multi-arquitectura, verificados contra Docker Hub:
 | langflow | `1.12.1@sha256:3e3cac65…` (la que ya corría y pasó la verificación de arriba) |
 | letta | `0.32.3@sha256:d27a77f3…` (mismo digest que `latest` ese día) |
 | flowise | `3.1.4@sha256:3922767a…` (última release; `latest` apuntaba a un build sin tag) |
+| redis | `7.4.11-alpine@sha256:ff02b58f…` (digest al que apuntaba `7-alpine`) |
+| alpine, paso init | `3.20@sha256:d9e853e87e55…` |
 
 Un test impide reintroducir `:latest`. Subir de versión es una decisión de curso.
 

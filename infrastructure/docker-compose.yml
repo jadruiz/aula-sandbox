@@ -44,7 +44,7 @@ services:
     # secreta en LANGFLOW_CONFIG_DIR. Un volumen nombrado nace como root; si el proceso no
     # puede escribir ahí, LangFlow cae en el arranque. Este paso corrige la propiedad del
     # volumen y termina; no expone puertos ni queda corriendo.
-    image: alpine:3.20
+    image: alpine:3.20@sha256:d9e853e87e55526f6b2917df91a2115c36dd7c696a35be12163d44e6e2a4b6bc
     user: "0:0"
     command: ["sh", "-c", "chown -R 1000:0 /app/langflow && chmod -R u+rwX,g+rwX /app/langflow"]
     volumes:
@@ -78,7 +78,7 @@ services:
 
   redis:
     # Memoria compartida del Lab M5 (observabilidad).
-    image: redis:7-alpine
+    image: redis:7.4.11-alpine@sha256:ff02b58f971e7d7d156a1267e283fcbbeee91773b6aa36c49dac28ecfe28eadf
     ports:
       - "127.0.0.1:6379:6379"   # accesible también para quien corre labs fuera del contenedor
 
