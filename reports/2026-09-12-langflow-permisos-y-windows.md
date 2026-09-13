@@ -54,7 +54,20 @@ inexistente.
 - Los `.bat` y el selector de carpeta en un Windows real con Docker Desktop y WSL 2; el
   contenedor de PowerShell prueba sintaxis y lógica, no el doble clic ni el diálogo.
 
+## Pin de imágenes, 2026-09-13
+
+Causa raíz de ambas fallas: `langflowai/langflow:latest` movió a 1.12.1. Se fijan por tag y
+digest multi-arquitectura, verificados contra Docker Hub:
+
+| Servicio | Imagen fijada |
+|---|---|
+| langflow | `1.12.1@sha256:3e3cac65…` (la que ya corría y pasó la verificación de arriba) |
+| letta | `0.32.3@sha256:d27a77f3…` (mismo digest que `latest` ese día) |
+| flowise | `3.1.4@sha256:3922767a…` (última release; `latest` apuntaba a un build sin tag) |
+
+Un test impide reintroducir `:latest`. Subir de versión es una decisión de curso.
+
 ## Pendiente
 
-- Prueba en un equipo Windows limpio: arranque, montaje de una carpeta y apagado.
+- Prueba en un equipo Windows limpio con la guía `docs/PRUEBA-WINDOWS.md`.
 - Decidir si `levantar_sandboxes_guiado.sh` del curso necesita versión para Windows.

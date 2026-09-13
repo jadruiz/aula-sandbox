@@ -9,6 +9,7 @@ evidencia. Aula sólo empaqueta y arranca herramientas.
 |-----------|--------------|
 | [`../README.md`](../README.md) | Qué es, arranque en dos pasos, URLs, contención honesta |
 | [`QUICKSTART.md`](QUICKSTART.md) | Default `trabajo/`, selector de carpeta y diagnóstico |
+| [`PRUEBA-WINDOWS.md`](PRUEBA-WINDOWS.md) | Guía de diez minutos para verificar los lanzadores `.bat` en un Windows real |
 | [`../AGENTS.md`](../AGENTS.md) | Contrato para agentes: axiomas, reglas, done |
 | [`../SOURCE.md`](../SOURCE.md) | Vínculo con el repo del curso y con asilo-sandbox |
 | [`architecture/DIAGRAMS.md`](architecture/DIAGRAMS.md) | Montajes, servicios y flujo de bundle |
@@ -19,5 +20,6 @@ evidencia. Aula sólo empaqueta y arranca herramientas.
 | [`../governance/decisions/ADR-003-workspace-explicito.md`](../governance/decisions/ADR-003-workspace-explicito.md) | Por qué se puede elegir carpeta sin ampliar el número de mounts |
 | [`../reports/2026-08-23-kasai-crew-readiness.md`](../reports/2026-08-23-kasai-crew-readiness.md) | Qué se levantó, qué falló/cambió y gates de integración reales |
 | [Workspace y dogfooding 2026-08-24](../reports/2026-08-24-workspace-y-dogfooding.md) | Evidencia estática/dinámica del selector y riesgo residual |
+| [LangFlow, Windows y pin de imágenes 2026-09-12](../reports/2026-09-12-langflow-permisos-y-windows.md) | Causa de la caída de LangFlow, lanzadores de Windows, verificación y pin por digest |
 | [`../infrastructure/docker-compose.yml`](../infrastructure/docker-compose.yml) | Servicios, puertos y perfiles |
 | Guía de uso por sesión | En el repo del curso: `documentacion/guia_practica_paso_a_paso.md` |

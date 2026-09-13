@@ -52,7 +52,10 @@ services:
 
   langflow:
     # Constructor visual de agentes: la ruta de los perfiles que no programan.
-    image: langflowai/langflow:latest
+    # Pin por tag y digest: el tag `latest` movió a 1.12.1 y rompió el arranque dos veces
+    # (ver reports/2026-09-12). Cambiar de versión es una decisión de curso: se prueba,
+    # se anota el digest nuevo y se reparte a todo el grupo a la vez (AGENTS.md, regla 3).
+    image: langflowai/langflow:1.12.1@sha256:3e3cac657435f292fb5da653e8eb05b330460a99f1420e169f29413ba9d11164
     depends_on:
       langflow-init:
         condition: service_completed_successfully
@@ -82,7 +85,7 @@ services:
   letta:
     # Memoria persistente de agentes (demo de M5). Arranca solo con: --profile memoria
     profiles: ["memoria"]
-    image: letta/letta:latest
+    image: letta/letta:0.32.3@sha256:d27a77f3de61e88f7064f434d75ae5f2037d09d5b0518532abc41694fcc01183
     ports:
       - "127.0.0.1:8283:8283"
     env_file:
@@ -94,7 +97,7 @@ services:
   flowise:
     # Alternativa drag-and-drop a LangFlow. Arranca solo con: --profile flowise
     profiles: ["flowise"]
-    image: flowiseai/flowise:latest
+    image: flowiseai/flowise:3.1.4@sha256:3922767afb52a5777759fd8b28a3c9eee864daea96018a791f2429eae2a76571
     ports:
       - "127.0.0.1:3001:3000"
     volumes:

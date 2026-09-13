@@ -78,3 +78,13 @@ def test_validador_rechaza_symlink(tmp_path: Path) -> None:
     link = home / "link"
     link.symlink_to(target, target_is_directory=True)
     assert _validate(link, home=home).returncode != 0
+
+
+def test_compose_no_usa_tags_flotantes() -> None:
+    # El pin es la imagen (AGENTS.md, regla 3): ningún servicio se jala por `latest`.
+    content = COMPOSE.read_text(encoding="utf-8")
+    for line in content.splitlines():
+        if line.strip().startswith("image:"):
+            assert ":latest" not in line, line
+            if "kasailabs/aula-sandbox" not in line:
+                assert "@sha256:" in line, line
